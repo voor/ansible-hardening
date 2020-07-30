@@ -63,8 +63,8 @@ security_epel_release_package: epel-release
 
 ## Accounts (accounts)
 # Set minimum password lifetime to 1 day for interactive accounts.
-security_set_minimum_password_lifetime: no                   # V-71927
-security_set_maximum_password_lifetime: no                   # V-71931
+security_set_minimum_password_lifetime: yes                   # V-71927
+security_set_maximum_password_lifetime: yes                   # V-71931
 
 ## AIDE (aide)
 # Initialize the AIDE database immediately (may take time).
@@ -188,7 +188,7 @@ security_shadow_utils_fail_delay: 4                          # V-71951
 # Create home directories for new users by default.
 security_shadow_utils_create_home: yes                       # V-72013
 # How many old user password to remember to prevent password re-use.
-#security_password_remember_password: 5                      # V-71933
+security_password_remember_password: 5                      # V-71933
 # Disable user accounts if the password expires.
 security_disable_account_if_password_expires: yes             # V-71941
 # Lock user accounts with excessive login failures. See documentation.
@@ -198,7 +198,7 @@ security_pam_faillock_attempts: 3
 security_pam_faillock_deny_root: yes                         # RHEL-07-010373
 security_pam_faillock_unlock_time: 604800                    # V-71943
 # Limit the number of concurrent connections per account.
-#security_rhel7_concurrent_session_limit: 10                 # V-72217
+security_rhel7_concurrent_session_limit: 10                 # V-72217
 # Remove .shosts and shosts.equiv files.
 security_rhel7_remove_shosts_files: yes                       # V-72277
 
