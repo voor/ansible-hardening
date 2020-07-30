@@ -157,7 +157,7 @@ security_rhel7_audit_account_actions: yes                    # V-72197
 security_sudoers_nopasswd_check_enable: yes
 
 # Disallow logins from accounts with blank/null passwords via PAM.
-security_disallow_blank_password_login: yes                  # V-71937
+security_disallow_blank_password_login: no                  # V-71937
 # Apply password quality rules.
 # NOTE: The security_pwquality_apply_rules variable is a "master switch".
 # Set the 'security_pwquality_apply_rules' variable to 'yes' to apply all of
@@ -179,8 +179,8 @@ security_password_encrypt_method: SHA512                     # V-71921
 # Ensure user/group admin utilities only store encrypted passwords.
 security_libuser_crypt_style_sha512: yes                     # V-71923
 # Set a minimum/maximum lifetime limit for user passwords.
-#security_password_min_lifetime_days: 1                      # V-71925
-#security_password_max_lifetime_days: 60                     # V-71929
+security_password_min_lifetime_days: 1                      # V-71925
+security_password_max_lifetime_days: 60                     # V-71929
 # Set a delay (in seconds) between failed login attempts.
 security_shadow_utils_fail_delay: 4                          # V-71951
 # Set a umask for all authenticated users.
@@ -257,7 +257,7 @@ security_enable_firewalld_rate_limit_burst: 100
 # Update the grub configuration.
 security_enable_grub_update: yes
 # Require authentication in GRUB to boot into single-user or maintenance modes.
-security_require_grub_authentication: no                     # V-71961 / V-71963
+security_require_grub_authentication: yes                     # V-71961 / V-71963
 # The default password for grub authentication is 'secrete'.
 security_grub_password_hash: grub.pbkdf2.sha512.10000.7B21785BEAFEE3AC71459D8210E3FB42EC0F5011C24A2DF31A8127D43A0BB4F1563549DF443791BE8EDA3AE4E4D4E04DB78D4CA35320E4C646CF38320CBE16EC.4B46176AAB1405D97BADB696377C29DE3B3266188D9C3D2E57F3AE851815CCBC16A275B0DBF6F79D738DAD8F598BEE64C73AE35F19A28C5D1E7C7D96FF8A739B
 # Set session timeout.
