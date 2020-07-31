@@ -111,3 +111,14 @@ stig_packages_rhel7:
       - nis
     state: absent
     enabled: "{{ security_rhel7_remove_ypserv }}"
+  - packages:
+      - vlock
+    state: present
+    enabled: "{{ security_lock_session }}"
+
+password_quality_debian:
+- parameter: dictcheck
+  value: 1
+  stig_id: V-75481
+  description: "Passwords must not use dictionary words"
+  enabled: "{{ security_pwquality_disallow_dictionary_words | bool }}"

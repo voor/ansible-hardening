@@ -113,6 +113,7 @@ security_rhel7_audit_fremovexattr: yes                        # V-72119
 security_rhel7_audit_fsetxattr: yes                           # V-72113
 security_rhel7_audit_ftruncate: yes                          # V-72133
 security_rhel7_audit_init_module: yes                        # V-72187
+security_rhel7_audit_finit_module: yes                        # V-75793
 security_rhel7_audit_gpasswd: yes                            # V-72153
 security_rhel7_audit_lchown: yes                              # V-72101
 security_rhel7_audit_lremovexattr: yes                        # V-72121
@@ -151,13 +152,15 @@ security_rhel7_audit_insmod: yes                             # V-72191
 security_rhel7_audit_rmmod: yes                              # V-72193
 security_rhel7_audit_modprobe: yes                           # V-72195
 security_rhel7_audit_account_actions: yes                    # V-72197
+security_rhel7_audit_faillog: yes                            # V-75773
+security_rhel7_audit_apparmor_parser: yes                    # V-75765
 
 ## Authentication (auth)
 # Check if sudoers has the NOPASSWD rule enabled
 security_sudoers_nopasswd_check_enable: yes
 
 # Disallow logins from accounts with blank/null passwords via PAM.
-security_disallow_blank_password_login: no                  # V-71937
+security_disallow_blank_password_login: yes                  # V-71937
 # Apply password quality rules.
 # NOTE: The security_pwquality_apply_rules variable is a "master switch".
 # Set the 'security_pwquality_apply_rules' variable to 'yes' to apply all of
@@ -172,6 +175,7 @@ security_pwquality_require_character_classes_changed: yes    # V-71913
 security_pwquality_limit_repeated_characters: yes            # V-71915
 security_pwquality_limit_repeated_character_classes: yes     # V-71917
 security_pwquality_require_minimum_password_length: yes       # V-71935
+security_pwquality_disallow_dictionary_words: yes            # V-75481
 # Use pwquality when passwords are changed or established.
 security_enable_pwquality_password_set: yes                   # V-73159
 # Ensure passwords are stored using SHA512.
@@ -186,7 +190,7 @@ security_shadow_utils_fail_delay: 4                          # V-71951
 # Set a umask for all authenticated users.
 # security_shadow_utils_umask: '077'                         # V-71995
 # Create home directories for new users by default.
-security_shadow_utils_create_home: yes                       # V-72013
+security_shadow_utils_create_home: 'yes'                       # V-72013
 # How many old user password to remember to prevent password re-use.
 security_password_remember_password: 5                      # V-71933
 # Disable user accounts if the password expires.
@@ -219,7 +223,7 @@ security_disable_gdm_automatic_login: yes                    # V-71953
 # Disable timed gdm logins for guests
 security_disable_gdm_timed_login: yes                        # V-71955
 # Enable session locking for graphical logins.
-security_lock_session: no                                    # V-71891
+security_lock_session: yes                                    # V-71891
 # Set a timer (in seconds) when an inactive session is locked.
 security_lock_session_inactive_delay: 900                    # V-71893
 # Prevent users from modifying session lock settings.

@@ -1,5 +1,5 @@
 {% if security_pwquality_apply_rules | bool %}
-{% for rule in password_quality_rhel7 %}
+{% for rule in password_quality_rhel7 + password_quality_debian %}
 {% if rule.value is defined and rule.enabled | bool %}
 # {{ rule.stig_id }} - {{ rule.description }}
 {{ rule.parameter}} = {{ rule.value }}

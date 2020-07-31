@@ -39,7 +39,13 @@
 {#                                                                           #}
 {% if audited_command['arch_specific'] %}
 {% for arch in auditd_architectures %}
+{% if audited_command['arch_specific'] == arch or audited_command['arch_specific'] | default(false) | bool %}
+{% if audited_command['path'] | default(false) %}
+-a always,exit -F arch={{ arch }} -F path={{ audited_command['path'] }}/{{ audited_command['command'] }} -F perm=x -F auid>=1000 -F auid!=4294967295 -k {{ audited_command['stig_id'] }}
+{% else %}
 -a always,exit -F arch={{ arch }} -S {{ audited_command['command'] }}  -F perm=x -F auid>=1000 -F auid!=4294967295 -k {{ audited_command['stig_id'] }}
+{% endif %}
+{% endif%}
 {% endfor %}
 {% else %}
 -a always,exit -F path={{ audited_command['path'] | default('/usr/bin') }}/{{ audited_command['command'] }} -F perm=x -F auid>=1000 -F auid!=4294967295 -k {{ audited_command['stig_id'] }}
