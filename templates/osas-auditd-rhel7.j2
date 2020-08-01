@@ -21,7 +21,29 @@
 {# syscall.                                                                  #}
 {#                                                                           #}
 # Audited commands and syscalls
+
+
+
 {% for audited_command in audited_commands %}
+{% set auids=[ "-F auid>=1000 -F auid!=4294967295" ] %}
+{% set perms=[] %}
+{#                                                                           #}
+{# Verify if audit rule needs to be added for root (auid=0)                  #}
+{#                                                                           #}
+{% if audited_command['add_root'] | default(false) %}
+{{ auids.append("-F auid=0") }}
+{% endif %}
+
+{#                                                                           #}
+{# Verify if audit rule needs to be check permission errors(EPERM,EACCES)    #}
+{#                                                                           #}
+{% if audited_command['audit_perm'] | default(false) %}
+{{ perms.append("-F exit=-EPERM") }}
+{{ perms.append("-F exit=-EACCES") }}
+{% else %}
+{{ perms.append("") }}
+{% endif %}
+
 {#                                                                           #}
 {# We replace any dashes in the command with underscores. The variables that #}
 {# control the deployment of each rule can only contain underscores.         #}
@@ -33,25 +55,28 @@
 {#                                                                           #}
 {% if vars['security_rhel7_audit_' + command_sanitized ] | bool and (audited_command['distro'] | default(ansible_os_family | lower) == ansible_os_family | lower) %}
 # {{ audited_command['stig_id'] }} - All uses of the {{ audited_command['command'] }} command must be audited.
+{% 	for perm in perms %}
+{% 		for auid in auids %}
 {#                                                                           #}
 {# Some audit rules are specific to syscalls. Different rules are needed for #}
 {# x86 and ppc64 systems.                                                    #}
 {#                                                                           #}
-{% if audited_command['arch_specific'] %}
-{% for arch in auditd_architectures %}
-{% if audited_command['arch_specific'] == arch or audited_command['arch_specific'] | default(false) | bool %}
-{% if audited_command['path'] | default(false) %}
--a always,exit -F arch={{ arch }} -F path={{ audited_command['path'] }}/{{ audited_command['command'] }} -F perm=x -F auid>=1000 -F auid!=4294967295 -k {{ audited_command['stig_id'] }}
-{% else %}
--a always,exit -F arch={{ arch }} -S {{ audited_command['command'] }}  -F perm=x -F auid>=1000 -F auid!=4294967295 -k {{ audited_command['stig_id'] }}
+{% 			if audited_command['arch_specific'] %}
+{% 				for arch in auditd_architectures %}
+{% 					if audited_command['arch_specific'] == arch or audited_command['arch_specific'] | default(false) | bool %}
+{% 						if audited_command['path'] | default(false) %}
+-a always,exit -F arch={{ arch }} -F path={{ audited_command['path'] }}/{{ audited_command['command'] }} {{ perm }} {{ auid }} -k {{ audited_command['stig_id'] }}
+{% 						else %}
+-a always,exit -F arch={{ arch }} -S {{ audited_command['command'] }}  {{ perm }} {{ auid }} -k {{ audited_command['stig_id'] }}
+{% 						endif %}
+{% 					endif%}
+{% 				endfor %}
+{% 			else %}
+-a always,exit -F path={{ audited_command['path'] | default('/usr/bin') }}/{{ audited_command['command'] }} {{ perm }} {{ auid }} -k {{ audited_command['stig_id'] }}
+{% 			endif %}
+{% 		endfor %}
+{% 	endfor %}
 {% endif %}
-{% endif%}
-{% endfor %}
-{% else %}
--a always,exit -F path={{ audited_command['path'] | default('/usr/bin') }}/{{ audited_command['command'] }} -F perm=x -F auid>=1000 -F auid!=4294967295 -k {{ audited_command['stig_id'] }}
-{% endif %}
-{% endif %}
-
 {% endfor %}
 
 # Other audited events
