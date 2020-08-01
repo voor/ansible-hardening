@@ -140,20 +140,9 @@ audited_commands:
     stig_id: V-72129
     arch_specific: yes
   - command: pam_timestamp_check
-    path: /sbin
+    path: "{{ pam_timestamp_check_path }}"
     stig_id: V-72185
     arch_specific: no
-    distro: redhat
-  - command: pam_timestamp_check
-    path: /sbin
-    stig_id: V-72185
-    arch_specific: no
-    distro: suse
-  - command: pam_timestamp_check
-    path: /usr/sbin
-    stig_id: V-72185
-    arch_specific: no
-    distro: debian
   - command: passwd
     stig_id: V-72149
     arch_specific: no

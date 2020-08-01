@@ -46,6 +46,7 @@ clamav_service: clamav-daemon
 # Commands
 grub_update_cmd: "/usr/sbin/update-grub"
 ssh_keysign_path: /usr/lib/openssh
+pam_timestamp_check_path: "/usr/sbin"
 
 # Other configuration
 security_interactive_user_minimum_uid: 500
