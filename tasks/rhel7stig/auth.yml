@@ -18,7 +18,7 @@
 - name: Set pam_faildelay configuration on Ubuntu
   lineinfile:
     dest: /etc/pam.d/login
-    regexp: '^(auth[\s]+optional[\s]+pam_faildelay.so).*$'
+    regexp: '^(auth[\s]+required[\s]+pam_faildelay.so).*$'
     line: '\1 delay={{ (security_shadow_utils_fail_delay | int) * 10**6 }}'
     state: present
     backrefs: yes
@@ -36,7 +36,6 @@
     state: present
     regexp: "^(.*)nullok_secure(.*)$"
     line: '\1\2'
-    backup: yes
     backrefs: yes
   when:
     - ansible_os_family == 'Debian'
@@ -269,3 +268,27 @@
     - auth
     - V-72277
     - V-72279
+
+- name: Prevent direct login into the root account
+  command: passwd -l root
+  tags:
+    - medium
+    - auth
+    - V-75445
+  when:
+    - ansible_os_family == 'Debian'
+
+- name: Ensure display the date and time of the last successful account logon upon logon. (Debian/Ubuntu)
+  lineinfile:
+    dest: "{{ pam_postlogin_file }}"
+    regexp: '^(session\s+[a-z0-9\=\[\] ]+\s+pam_lastlog\.so.+?)\s+(?:showfailed)?$'
+    line: '\1 showfailed'
+    backrefs: yes
+    state: present
+  when:
+    - ansible_os_family == 'Debian'
+    - security_showfailed | bool
+  tags:
+    - auth
+    - low
+    - V-75497

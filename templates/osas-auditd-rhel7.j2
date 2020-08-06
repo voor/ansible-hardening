@@ -27,6 +27,7 @@
 {% for audited_command in audited_commands %}
 {% set auids=[ "-F auid>=1000 -F auid!=4294967295" ] %}
 {% set perms=[] %}
+{% set x_flag="" %}
 {#                                                                           #}
 {# Verify if audit rule needs to be added for root (auid=0)                  #}
 {#                                                                           #}
@@ -42,6 +43,13 @@
 {{ perms.append("-F exit=-EACCES") }}
 {% else %}
 {{ perms.append("") }}
+{% endif %}
+
+{#                                                                           #}
+{# Verify if audit rule needs -F perm=x flag                                 #}
+{#                                                                           #}
+{% if audited_command['add_x_flag'] | default(false) %}
+{% set x_flag="-F perm=x" %}
 {% endif %}
 
 {#                                                                           #}
@@ -65,14 +73,14 @@
 {% 				for arch in auditd_architectures %}
 {% 					if audited_command['arch_specific'] == arch or audited_command['arch_specific'] | default(false) | bool %}
 {% 						if audited_command['path'] | default(false) %}
--a always,exit -F arch={{ arch }} -F path={{ audited_command['path'] }}/{{ audited_command['command'] }} {{ perm }} {{ auid }} -k {{ audited_command['stig_id'] }}
+-a always,exit -F arch={{ arch }} -F path={{ audited_command['path'] }}/{{ audited_command['command'] }} {{ perm }} {{ x_flag }} {{ auid }} -k {{ audited_command['stig_id'] }}
 {% 						else %}
--a always,exit -F arch={{ arch }} -S {{ audited_command['command'] }}  {{ perm }} {{ auid }} -k {{ audited_command['stig_id'] }}
+-a always,exit -F arch={{ arch }} -S {{ audited_command['command'] }}  {{ perm }} {{ x_flag }} {{ auid }} -k {{ audited_command['stig_id'] }}
 {% 						endif %}
 {% 					endif%}
 {% 				endfor %}
 {% 			else %}
--a always,exit -F path={{ audited_command['path'] | default('/usr/bin') }}/{{ audited_command['command'] }} {{ perm }} {{ auid }} -k {{ audited_command['stig_id'] }}
+-a always,exit -F path={{ audited_command['path'] | default('/usr/bin') }}/{{ audited_command['command'] }} {{ perm }} {{ x_flag }} {{ auid }} -k {{ audited_command['stig_id'] }}
 {% 			endif %}
 {% 		endfor %}
 {% 	endfor %}
@@ -125,4 +133,21 @@
 -w /etc/gshadow -p wa -k V-72197
 -w /etc/shadow -p wa -k V-72197
 -w /etc/security/opasswd -p wa -k V-72197
+{% endif %}
+
+{% if security_rhel7_audit_execve | bool %}
+-a always,exit -F arch=b32 -S execve -C uid!=euid -F key=execpriv 
+-a always,exit -F arch=b64 -S execve -C uid!=euid -F key=execpriv
+-a always,exit -F arch=b32 -S execve -C gid!=egid -F key=execpriv 
+-a always,exit -F arch=b64 -S execve -C gid!=egid -F key=execpriv
+{% endif %}
+
+{% if security_rhel7_audit_kmod | bool %}
+# V-72191 - All uses of the insmod command must be audited.
+-w /bin/kmod -p x -k V-75715
+{% endif %}
+
+{% if security_rhel7_audit_faillog | bool %}
+# V-75773 - Successful/unsuccessful modifications to the faillog file must generate an audit record.
+-w /var/log/faillog -p wa -k logins
 {% endif %}

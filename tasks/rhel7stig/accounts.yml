@@ -247,3 +247,29 @@
     - V-73159
 
 
+- name:  V-75463 - Ensure the system must use a sufficient number of hashing rounds to ensure the required level of entropy.
+  lineinfile:
+    dest: "{{ pam_password_file }}"
+    regexp: '^(password\s+[a-z0-9\=\[\] ]+\s+pam_unix\.so.+?)\s+(?:rounds=\d+)?$'
+    line: '\1 rounds={{ security_password_rounds }}'
+    backrefs: yes
+    state: present
+  when:
+    - security_password_rounds is defined
+  tags:
+    - accounts
+    - medium
+    - V-75463
+
+- name:  V-75487 - Automatically lock an account until the locked account is released by an administrator when three unsuccessful logon attempts
+  lineinfile:
+    dest: "{{ pam_postlogin_file }}"
+    regexp: '^(auth\s+[a-z0-9\=\[\] ]+\s+pam_tally2\.so.+?)\s+(?:onerr=[a-zA-Z_]+)?\s+(?:deny=\d+)$'
+    line: '\1 onerr=fail deny {{ security_login_unsuccessful_attempts }}'
+    backrefs: yes
+    state: present
+  when:
+    - security_login_unsuccessful_attempts is defined
+  tags:
+    - medium
+    - V-75487
