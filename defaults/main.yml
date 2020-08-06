@@ -88,8 +88,8 @@ security_aide_exclude_dirs:
 # Set the auditd failure flag. WARNING: READ DOCUMENTATION BEFORE CHANGING!
 security_rhel7_audit_failure_flag: 1                         # V-72081
 # Set the action to take when the disk is full or network events cannot be sent.
-security_rhel7_auditd_disk_full_action: rotate               # V-72087
-security_rhel7_auditd_network_failure_action: syslog         # V-72087
+security_rhel7_auditd_disk_full_action: ROTATE               # V-72087
+security_rhel7_auditd_network_failure_action: SYSLOG         # V-72087
 # Size of remaining disk space (in MB) that triggers alerts.
 security_rhel7_auditd_space_left: "{{ (ansible_mounts | selectattr('mount', 'equalto', '/') | map(attribute='size_total') | first * 0.25 / 1024 / 1024) | int }}" # V-72089
 # Action to take when the space_left threshold is reached.
@@ -194,7 +194,7 @@ security_password_max_lifetime_days: 60                     # V-71929
 # Set a delay (in seconds) between failed login attempts.
 security_shadow_utils_fail_delay: 4                          # V-71951
 # Set a umask for all authenticated users.
-# security_shadow_utils_umask: '077'                         # V-71995
+security_shadow_utils_umask: '077'                         # V-71995
 # Create home directories for new users by default.
 security_shadow_utils_create_home: 'yes'                       # V-72013
 # How many old user password to remember to prevent password re-use.

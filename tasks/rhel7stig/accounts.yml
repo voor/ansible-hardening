@@ -263,11 +263,10 @@
 
 - name:  V-75487 - Automatically lock an account until the locked account is released by an administrator when three unsuccessful logon attempts
   lineinfile:
-    dest: "{{ pam_postlogin_file }}"
-    regexp: '^(auth\s+[a-z0-9\=\[\] ]+\s+pam_tally2\.so.+?)\s+(?:onerr=[a-zA-Z_]+)?\s+(?:deny=\d+)$'
-    line: '\1 onerr=fail deny {{ security_login_unsuccessful_attempts }}'
-    backrefs: yes
+    dest: "{{ pam_auth_file }}"
+    line: 'auth required pam_tally2.so onerr=fail deny=3'
     state: present
+    insertafter: EOF
   when:
     - security_login_unsuccessful_attempts is defined
   tags:

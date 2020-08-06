@@ -281,8 +281,8 @@
 - name: Ensure display the date and time of the last successful account logon upon logon. (Debian/Ubuntu)
   lineinfile:
     dest: "{{ pam_postlogin_file }}"
-    regexp: '^(session\s+[a-z0-9\=\[\] ]+\s+pam_lastlog\.so.+?)\s+(?:showfailed)?$'
-    line: '\1 showfailed'
+    regexp: '^\s*session.*pam_lastlog\.so.*$'
+    line: 'session required pam_lastlog.so showfailed'
     backrefs: yes
     state: present
   when:

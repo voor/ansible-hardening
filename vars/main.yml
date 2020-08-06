@@ -217,6 +217,7 @@ audited_commands:
   - command: sudoedit
     stig_id: V-72169
     arch_specific: no
+    add_x_flag: yes
   - command: truncate
     stig_id: V-72131
     arch_specific: yes
