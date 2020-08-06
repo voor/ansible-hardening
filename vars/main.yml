@@ -215,7 +215,6 @@ audited_commands:
     arch_specific: no
     add_x_flag: yes
   - command: sudoedit
-    path: /bin
     stig_id: V-72169
     arch_specific: no
   - command: truncate
@@ -254,7 +253,6 @@ audited_commands:
     distro: debian
     add_x_flag: yes
   - command: chacl
-    path: /bin
     stig_id: V-75769
     arch_specific: no
     distro: debian
