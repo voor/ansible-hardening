@@ -162,3 +162,26 @@
     - file_perms
     - V-72053
     - V-72055
+
+- name: Search for initialization files
+  command: find /root /home -type f -name ".*"
+  args:
+    warn: no
+  register: initialization_files
+  changed_when: false
+  when:
+    - security_set_initialization_files_perm | bool
+  tags:
+    - always
+
+- name:  V-75569 - Set permission on initialization files
+  file:
+    path: "{{ item }}"
+    mode: 0740
+  when:
+    - security_set_initialization_files_perm | bool
+  with_items: "{{ initialization_files.stdout_lines }}"
+  tags:
+    - medium
+    - file_perms
+    - V-75569

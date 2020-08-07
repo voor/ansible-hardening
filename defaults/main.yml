@@ -231,6 +231,7 @@ security_search_for_invalid_group_owner: yes                  # V-72009
 security_set_home_directory_permissions_and_owners: yes       # V-72017 / V-72019 / V-72021
 # Find all world-writable directories and display them.
 security_find_world_writable_dirs: yes                        # V-72047
+security_set_initialization_files_perm: yes                   # V-75569
 
 ## Graphical interfaces (graphical)
 # Disable automatic gdm logins
