@@ -17,11 +17,9 @@
 # microseconds.
 - name: Set pam_faildelay configuration on Ubuntu
   lineinfile:
-    dest: /etc/pam.d/login
-    regexp: '^(auth[\s]+required[\s]+pam_faildelay.so).*$'
-    line: '\1 delay={{ (security_shadow_utils_fail_delay | int) * 10**6 }}'
+    dest: /etc/pam.d/common-auth
+    line: 'auth       required   pam_faildelay.so  delay={{ (security_shadow_utils_fail_delay | int) * 10**6 }}'
     state: present
-    backrefs: yes
   when:
     - security_shadow_utils_fail_delay is defined
     - ansible_os_family | lower == 'debian'
@@ -281,7 +279,7 @@
 - name: Ensure display the date and time of the last successful account logon upon logon. (Debian/Ubuntu)
   lineinfile:
     dest: "{{ pam_postlogin_file }}"
-    regexp: '^\s*session.*pam_lastlog\.so.*$'
+    regexp: '(^\s*session.*pam_lastlog\.so.*$)'
     line: 'session required pam_lastlog.so showfailed'
     backrefs: yes
     state: present

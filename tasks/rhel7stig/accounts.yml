@@ -263,12 +263,23 @@
 
 - name:  V-75487 - Automatically lock an account until the locked account is released by an administrator when three unsuccessful logon attempts
   lineinfile:
-    dest: "{{ pam_auth_file }}"
+    dest: "{{ pam_auth_file  }}"
     line: 'auth required pam_tally2.so onerr=fail deny=3'
     state: present
     insertafter: EOF
   when:
-    - security_login_unsuccessful_attempts is defined
+    - security_login_unsuccessful_attempts | bool
   tags:
     - medium
     - V-75487
+
+- name:  V-75545 - Remove unnecessary accounts.
+  user:
+    name: "{{ item  }}"
+    state: absent
+    remove: yes
+    force: yes
+  with_items: "{{ security_unnecessary_accounts }}"
+  tags:
+    - medium
+    - V-75545

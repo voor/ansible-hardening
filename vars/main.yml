@@ -42,7 +42,9 @@ auditd_config:
   - parameter: action_mail_acct
     value: "{{ security_rhel7_auditd_action_mail_acct }}"
     config: /etc/audit/auditd.conf
-
+  - parameter: log_group
+    value: "{{ security_rhel7_auditd_log_group }}"
+    config: /etc/audit/auditd.conf
 ## auditd rules
 # This variable is used in tasks/rhel7stig/auditd.yml to deploy auditd rules
 # for various commands and syscalls.
@@ -138,6 +140,7 @@ audited_commands:
     path: /bin
     stig_id: V-72171
     arch_specific: no
+    add_x_flag: yes
   - command: newgrp
     stig_id: V-72165
     arch_specific: no
@@ -248,7 +251,6 @@ audited_commands:
     distro: debian
     add_x_flag: yes
   - command: setfacl
-    path: /bin
     stig_id: V-75767
     arch_specific: no
     distro: debian
@@ -272,6 +274,11 @@ audited_commands:
     add_x_flag: yes
   - command: ssh-agent
     stig_id: V-75699
+    arch_specific: no
+    distro: debian
+    add_x_flag: yes
+  - command: chfn
+    stig_id: V-75693
     arch_specific: no
     distro: debian
     add_x_flag: yes

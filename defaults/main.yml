@@ -40,7 +40,7 @@ security_package_state: present
 # Set the following variable to `no` to prevent the EPEL repository from being
 # installed by the role. This may prevent certain packages from installing,
 # such as ClamAV.
-security_epel_install_repository: yes
+security_epel_install_repository: no
 #
 # Some deployers install a customized EPEL package that redirects servers to
 # their internal EPEL mirrors. Provide the name of the EPEL repository package
@@ -88,14 +88,16 @@ security_aide_exclude_dirs:
 # Set the auditd failure flag. WARNING: READ DOCUMENTATION BEFORE CHANGING!
 security_rhel7_audit_failure_flag: 1                         # V-72081
 # Set the action to take when the disk is full or network events cannot be sent.
-security_rhel7_auditd_disk_full_action: ROTATE               # V-72087
-security_rhel7_auditd_network_failure_action: SYSLOG         # V-72087
+security_rhel7_auditd_disk_full_action: rotate               # V-72087
+security_rhel7_auditd_network_failure_action: syslog         # V-72087
 # Size of remaining disk space (in MB) that triggers alerts.
 security_rhel7_auditd_space_left: "{{ (ansible_mounts | selectattr('mount', 'equalto', '/') | map(attribute='size_total') | first * 0.25 / 1024 / 1024) | int }}" # V-72089
 # Action to take when the space_left threshold is reached.
 security_rhel7_auditd_space_left_action: email               # V-72091
 # Send auditd email alerts to this user.
 security_rhel7_auditd_action_mail_acct: root                 # V-72093
+#  Audit log directory must be group-owned by root
+security_rhel7_auditd_log_group: root                        # V-75645
 # Add audit rules for commands/syscalls.
 security_rhel7_audit_chsh: yes                               # V-72167
 security_rhel7_audit_chage: yes                              # V-72155
@@ -161,6 +163,7 @@ security_rhel7_audit_chacl: yes                              # V-75769
 security_rhel7_audit_unix_update: yes                        # V-75779
 security_rhel7_audit_usermod: yes                            # V-75785
 security_rhel7_audit_ssh_agent: yes                          # V-75699
+security_rhel7_audit_chfn: yes                              # V-75693
 ## Authentication (auth)
 # Check if sudoers has the NOPASSWD rule enabled
 security_sudoers_nopasswd_check_enable: yes
@@ -206,7 +209,7 @@ security_showfailed: yes                                      # V-75497
 # Disable user accounts if the password expires.
 security_disable_account_if_password_expires: yes             # V-71941
 # Automatically lock an account when three unsuccessful logon attempts.
-security_login_unsuccessful_attempts: 3                       # V-75487
+security_login_unsuccessful_attempts: yes                       # V-75487
 # Lock user accounts with excessive login failures. See documentation.
 security_pam_faillock_enable: yes                             # V-71945 / V-71943 / RHEL-07-010373
 security_pam_faillock_interval: 900
@@ -261,7 +264,7 @@ security_rhel7_disable_autofs: yes                           # V-71985
 # Enable virus scanning with clamav
 security_enable_virus_scanner: no                            # V-72213
 # Run the virus scanner update during the deployment (if scanner is deployed)
-security_run_virus_scanner_update: yes
+security_run_virus_scanner_update: no
 # Disable ctrl-alt-delete key sequence on the console.
 security_rhel7_disable_ctrl_alt_delete: yes                  # V-71993
 # Install and enable firewalld for iptables management.
@@ -277,7 +280,7 @@ security_require_grub_authentication: yes                     # V-71961 / V-7196
 # The default password for grub authentication is 'secrete'.
 security_grub_password_hash: grub.pbkdf2.sha512.10000.7B21785BEAFEE3AC71459D8210E3FB42EC0F5011C24A2DF31A8127D43A0BB4F1563549DF443791BE8EDA3AE4E4D4E04DB78D4CA35320E4C646CF38320CBE16EC.4B46176AAB1405D97BADB696377C29DE3B3266188D9C3D2E57F3AE851815CCBC16A275B0DBF6F79D738DAD8F598BEE64C73AE35F19A28C5D1E7C7D96FF8A739B
 # Set session timeout.
-security_rhel7_session_timeout: 600                          # V-72223
+security_rhel7_session_timeout: 900                          # V-72223
 # Enable chrony for NTP time synchronization.
 security_rhel7_enable_chrony: yes                            # V-72269
 # Use the following NTP servers.
@@ -302,13 +305,32 @@ security_ntp_bind_local_interfaces_only: yes
 security_rhel7_restrict_mail_relaying: yes                   # V-72297
 # Deploy a login banner.                                     # V-72225 / V-71863
 security_login_banner_text: |
-  ------------------------------------------------------------------------------
-  * WARNING                                                                    *
-  * You are accessing a secured system and your actions will be logged along   *
-  * with identifying information. Disconnect immediately if you are not an     *
-  * authorized user of this system.                                            *
-  ------------------------------------------------------------------------------
+  You are accessing a U.S. Government (USG) Information System (IS) that is
+  provided for USG-authorized use only.
+  By using this IS (which includes any device attached to this IS), you consent
+  to the following conditions:
+  -The USG routinely intercepts and monitors communications on this IS for
+  purposes including, but not limited to, penetration testing, COMSEC monitoring,
+  network operations and defense, personnel misconduct (PM), law enforcement
+  (LE), and counterintelligence (CI) investigations.
+  -At any time, the USG may inspect and seize data stored on this IS.
+  -Communications using, or data stored on, this IS are not private, are subject
+  to routine monitoring, interception, and search, and may be disclosed or used
+  for any USG-authorized purpose.
+  -This IS includes security measures (e.g., authentication and access controls)
+  to protect USG interests--not for your personal benefit or privacy.
+  -Notwithstanding the above, using this IS does not constitute consent to PM, LE
+  or CI investigative searching or monitoring of the content of privileged
+  communications, or work product, related to personal representation or services
+  by attorneys, psychotherapists, or clergy, and their assistants. Such
+  communications and work product are private and confidential. See User
+  Agreement for details.
 
+
+# Enable cron logging
+security_logging_enable_cron: yes                            # V-75865
+# Enable daemon.notice logging
+security_logging_enable_daemon_notice: yes                   # V-75863
 
 ## Packages (packages)
 # Remove packages from the system as required by the STIG. Set any of these
@@ -394,6 +416,17 @@ security_rhel7_disable_dccp: yes                             # V-77821
 # Enable Address Space Layout Randomization (ASLR).
 security_enable_aslr: yes                                    # V-77825
 
+## Users/groups
+security_unnecessary_accounts:
+  - "games"
+  - "gopher"
+  - "ftp"
+  - "lp"
+  - "mail"
+  - "news"
+  - "www-data"
+  - "irc"
+  - "list"
 ###############################################################################
 #   ____            _        _ _
 #  / ___|___  _ __ | |_ _ __(_) |__

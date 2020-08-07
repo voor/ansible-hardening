@@ -236,6 +236,8 @@
     - medium
     - misc
     - V-72223
+  when:
+    - ansible_os_family != "Debian"
 
 - name: V-72223 - Set 10 minute timeout on communication sessions
   blockinfile:
@@ -252,6 +254,27 @@
     - medium
     - misc
     - V-72223
+  when:
+    - ansible_os_family != "Debian"
+
+- name: V-75441 - Set 10 minute timeout on communication sessions (Ubuntu)
+  blockinfile:
+    dest: /etc/profile.d/autologout.sh
+    state: present
+    create: yes
+    insertbefore: EOF
+    marker: "# {mark} MANAGED BY ANSIBLE-HARDENING"
+    block: |
+      # Set a {{ security_rhel7_session_timeout }} second timeout for sessions
+      TMOUT={{ security_rhel7_session_timeout }}
+      readonly TMOUT
+      export TMOUT
+  tags:
+    - medium
+    - misc
+    - V-75441
+  when:
+    - ansible_os_family == "Debian"
 
 - name: Start and enable chrony
   service:
@@ -438,3 +461,41 @@
     - high
     - misc
     - V-72313
+
+- name: V-75435 - Copy login warning banner to /etc/issue (Ubuntu)
+  copy:
+    content: "{{ security_login_banner_text }}"
+    dest: /etc/issue
+  tags:
+    - medium
+    - V-75435
+  when:
+    - ansible_os_family == 'Debian'
+
+- name: V-71933 - Enable cron logging
+  lineinfile:
+    dest: "/etc/rsyslog.d/50-default.conf"
+    regexp: '(#)(cron\.\*.*)'
+    line: '\2'
+    backrefs: yes
+    state: present
+  when:
+    - ansible_os_family == 'Debian'
+    - security_logging_enable_cron is defined
+  tags:
+    - medium
+    - V-71933
+
+- name: V-75863 - Enable daemon logging
+  lineinfile:
+    dest: "/etc/rsyslog.d/50-default.conf"
+    regexp: '^(#)(daemon\.)([^\s]*)(\s+)(.*)$'
+    line: '\2notice\4\5'
+    backrefs: yes
+    state: present
+  when:
+    - ansible_os_family == 'Debian'
+    - security_logging_enable_daemon_notice is defined
+  tags:
+    - medium
+    - V-75863
