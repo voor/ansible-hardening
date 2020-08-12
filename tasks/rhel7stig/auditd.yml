@@ -38,6 +38,7 @@
     - security_audisp_remote_server is defined
     - audisp_remote_conf.stat.exists
   notify:
+    - ensure audit log dir
     - restart auditd
   tags:
     - medium
@@ -53,6 +54,7 @@
     - security_audisp_enable_krb5 is defined
     - audisp_remote_conf.stat.exists
   notify:
+    - ensure audit log dir
     - restart auditd
   tags:
     - medium
@@ -163,6 +165,7 @@
     - auditd_conf.stat.exists
     - audisp_remote_conf.stat.exists
   notify:
+    - ensure audit log dir
     - restart auditd
   tags:
     - high

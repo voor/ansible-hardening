@@ -13,6 +13,17 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+- name: ensure audit log dir
+  file:
+    state: directory
+    path: /var/log/audit
+    owner: root
+    group: root
+    mode: 0755
+  when:
+    - ansible_os_family == 'Debian'
+
+
 # Restarting services ########################################################
 #
 # NOTE(mhayden): It's not possible to use systemd to restart auditd on CentOS
@@ -65,7 +76,10 @@
 # Miscellaneous ##############################################################
 - name: generate auditd rules
   command: augenrules --load
-  notify: restart auditd
+  notify:
+    - ensure audit log dir
+    - restart auditd
+
 
 - name: rehash aliases
   command: newaliases
