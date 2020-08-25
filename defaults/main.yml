@@ -275,7 +275,7 @@ security_enable_firewalld_rate_limit: no                     # V-72271
 security_enable_firewalld_rate_limit_per_minute: 25
 security_enable_firewalld_rate_limit_burst: 100
 # Update the grub configuration.
-security_enable_grub_update: yes
+security_enable_grub_update: no
 # Require authentication in GRUB to boot into single-user or maintenance modes.
 security_require_grub_authentication: yes                     # V-71961 / V-71963
 # The default password for grub authentication is 'secrete'.
