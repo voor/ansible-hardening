@@ -85,9 +85,9 @@ stig_packages_rhel7:
     state: "{{ security_package_state }}"
     enabled: "{{ security_enable_firewalld }}"
   - packages:
-      - libpam-pkcs-11
+      - libpam-pkcs11
     state: "{{ security_package_state }}"
-    enabled: "{{ security_enable_libpam_pkcs_11 }}"
+    enabled: "{{ security_enable_libpam_pkcs11 }}"
   - packages:
       - unattended-upgrades
     state: "{{ security_package_state }}"
