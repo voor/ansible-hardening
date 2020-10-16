@@ -43,28 +43,33 @@
     insertbefore: EOF
     marker: "# {mark} MANAGED BY ANSIBLE-HARDENING"
     block: |
-      # Rules borrowed from CentOS/RHEL AIDE configuration
-      # (SELinux was removed for Ubuntu compatibility.)
-      FIPSR = p+i+n+u+g+s+m+c+acl+xattrs+sha256
-      NORMAL = FIPSR+sha512
-
-      # The following two lines apply the NORMAL rule (above this line) to the
-      # /bin and /sbin directories to meet the requirements of two STIG controls:
-      #
-      #   V-72069 - Verify ACLs
-      #   V-72071 - Verify extended attributes
-      #
-      /bin    NORMAL
-      /sbin   NORMAL
+      /sbin/auditctl p+i+n+u+g+s+b+acl+xattrs+sha512
+      /sbin/auditd p+i+n+u+g+s+b+acl+xattrs+sha512
+      /sbin/ausearch p+i+n+u+g+s+b+acl+xattrs+sha512
+      /sbin/aureport p+i+n+u+g+s+b+acl+xattrs+sha512
+      /sbin/autrace p+i+n+u+g+s+b+acl+xattrs+sha512
+      /sbin/audispd p+i+n+u+g+s+b+acl+xattrs+sha512
+      /sbin/augenrules p+i+n+u+g+s+b+acl+xattrs+sha512
   when:
     - aide_conf.results[0].stat.exists | bool
     - ansible_os_family | lower == 'debian'
   tags:
-    - low
+    - medium
     - aide
-    - V-72069
-    - V-72071
-    - V-72073
+    - V-100895
+
+- name: The Ubuntu operating system must notify designated personnel if baseline configurations are changed in an unauthorized manner
+  lineinfile:
+    dest: /etc/default/aide
+    regexp: '^[#\s]*SILENTREPORTS'
+    line: 'SILENTREPORTS=yes'
+  when:
+    - aide_conf.results[0].stat.exists | bool
+    - ansible_os_family | lower == 'debian'
+  tags:
+    - accounts
+    - medium
+    - V-100899
 
 # NOTE(hwoarang): Add acl and xattrs on SUSE to meet V-72069 and V-72071.
 - name: Configure AIDE to verify additional properties (SUSE)
