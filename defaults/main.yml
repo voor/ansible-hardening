@@ -68,7 +68,7 @@ security_set_maximum_password_lifetime: yes                   # V-71931
 
 ## AIDE (aide)
 # Initialize the AIDE database immediately (may take time).
-security_rhel7_initialize_aide: yes                           # V-71973
+security_rhel7_initialize_aide: no                           # V-71973
 
 # The default Ubuntu configuration for AIDE will cause it to wander into some
 # terrible places on the system, such as /var/lib/lxc and images in /opt.
@@ -263,7 +263,7 @@ security_rhel7_enable_linux_security_module: yes             # V-71989 / V-71991
 # Disable the autofs service.
 security_rhel7_disable_autofs: yes                           # V-71985
 # Enable virus scanning with clamav
-security_enable_virus_scanner: yes                            # V-72213
+security_enable_virus_scanner: no                            # V-72213
 # Run the virus scanner update during the deployment (if scanner is deployed)
 security_run_virus_scanner_update: no
 # Disable ctrl-alt-delete key sequence on the console.
@@ -430,6 +430,9 @@ security_unnecessary_accounts:
   - "www-data"
   - "irc"
   - "list"
+  - "landscape"
+  - "pollinate"
+
 ###############################################################################
 #   ____            _        _ _
 #  / ___|___  _ __ | |_ _ __(_) |__
@@ -455,3 +458,6 @@ security_contrib_enabled: no
 # DANGER: SYSTEM. This will cause downtime for any services that depend on
 # DANGER: IPv6 network connectivity.
 security_contrib_disable_ipv6: no                            # C-00001
+
+#remove mail(postfix)
+remove_postfix: yes

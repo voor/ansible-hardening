@@ -47,6 +47,8 @@
   service:
     name: postfix
     state: restarted
+  when:
+    - not remove_postfix | bool
 
 - name: restart rsyslog
   service:

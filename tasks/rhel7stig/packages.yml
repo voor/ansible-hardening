@@ -54,3 +54,10 @@
     - V-72233
     - V-72301
     - V-72307
+
+- name: Remove postfix
+  package:
+    name: "postfix"
+    state: absent
+  when:
+    - remove_postfix | bool

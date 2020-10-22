@@ -120,7 +120,16 @@ stig_packages_rhel7:
       - vlock
     state: present
     enabled: "{{ security_lock_session }}"
-
+  - packages:
+      - at
+      - landscape-client
+      - landscape-common
+      - mlocate
+      - pollinate
+      - postfix
+      - screen
+    state: absent
+    enabled: True
 password_quality_debian:
 - parameter: dictcheck
   value: 1
