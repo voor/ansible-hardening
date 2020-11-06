@@ -94,6 +94,7 @@
   template:
     src: osas-auditd-rhel7.j2
     dest: /etc/audit/rules.d/osas-auditd-rhel7.rules
+    mode: '0640'
   when:
     - auditd_conf.stat.exists
   notify:
@@ -154,6 +155,7 @@
     - V-72195
     - V-72197
     - V-72081
+    - V-219234
 
 - name: Adjust auditd/audispd configurations
   lineinfile:

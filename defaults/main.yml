@@ -88,7 +88,7 @@ security_aide_exclude_dirs:
 # Set the auditd failure flag. WARNING: READ DOCUMENTATION BEFORE CHANGING!
 security_rhel7_audit_failure_flag: 1                         # V-72081
 # Set the action to take when the disk is full or network events cannot be sent.
-security_rhel7_auditd_disk_full_action: rotate               # V-72087
+security_rhel7_auditd_disk_full_action: syslog               # V-72087
 security_rhel7_auditd_network_failure_action: syslog         # V-72087
 # Size of remaining disk space (in MB) that triggers alerts.
 security_rhel7_auditd_space_left: "{{ (ansible_mounts | selectattr('mount', 'equalto', '/') | map(attribute='size_total') | first * 0.25 / 1024 / 1024) | int }}" # V-72089
@@ -183,8 +183,9 @@ security_pwquality_require_characters_changed: yes           # V-71911
 security_pwquality_require_character_classes_changed: yes    # V-71913
 security_pwquality_limit_repeated_characters: yes            # V-71915
 security_pwquality_limit_repeated_character_classes: yes     # V-71917
-security_pwquality_require_minimum_password_length: yes       # V-71935
+security_pwquality_require_minimum_password_length: yes      # V-71935
 security_pwquality_disallow_dictionary_words: yes            # V-75481
+security_pwquality_enforcing: yes                            #V-219186
 # Use pwquality when passwords are changed or established.
 security_enable_pwquality_password_set: yes                   # V-73159
 # Ensure passwords are stored using SHA512.
@@ -217,7 +218,7 @@ security_pam_faillock_attempts: 3
 security_pam_faillock_deny_root: yes                         # RHEL-07-010373
 security_pam_faillock_unlock_time: 604800                    # V-71943
 # Limit the number of concurrent connections per account.
-security_rhel7_concurrent_session_limit: 10                 # V-72217
+security_rhel7_concurrent_session_limit: 9                 # V-72217
 # Remove .shosts and shosts.equiv files.
 security_rhel7_remove_shosts_files: yes                       # V-72277
 
@@ -372,7 +373,7 @@ security_sshd_cipher_list: 'aes128-ctr,aes192-ctr,aes256-ctr' # V-72221
 security_sshd_banner_file: /etc/motd                         # V-71861 / V-72225
 # Set the interval for max session length and the number of intervals to allow.
 security_sshd_client_alive_interval: 600                     # V-72237
-security_sshd_client_alive_count_max: 0                      # V-72241
+security_sshd_client_alive_count_max: 1                      # V-72241
 # Print the last login for a user when they log in over ssh.
 security_sshd_print_last_log: yes                            # V-72245
 # Permit direct root logins ('yes', 'no', 'without-password', 'prohibit-password', 'forced-commands-only')

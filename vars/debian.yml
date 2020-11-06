@@ -62,6 +62,8 @@ stig_packages_rhel7:
       - openssh-client
       - openssh-server
       - screen
+      - opensc-pkcs11
+      - libpam-pkcs11
     state: "{{ security_package_state }}"
     enabled: True
   - packages:
@@ -84,10 +86,6 @@ stig_packages_rhel7:
       - firewalld
     state: "{{ security_package_state }}"
     enabled: "{{ security_enable_firewalld }}"
-  - packages:
-      - libpam-pkcs11
-    state: "{{ security_package_state }}"
-    enabled: "{{ security_enable_libpam_pkcs11 }}"
   - packages:
       - unattended-upgrades
     state: "{{ security_package_state }}"
@@ -136,3 +134,8 @@ password_quality_debian:
   stig_id: V-75481
   description: "Passwords must not use dictionary words"
   enabled: "{{ security_pwquality_disallow_dictionary_words | bool }}"
+- parameter: enforcing
+  value: 1
+  stig_id: V-219186
+  description: "pwquality module is being enforced"
+  enabled: "{{ security_pwquality_enforcing | bool }}"

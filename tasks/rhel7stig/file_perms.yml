@@ -206,10 +206,19 @@
     state: "{{ item.state }}"
     owner: root
     group: root
-    mode: '0755'
+    mode: "{{ item.mode }}"
   with_items:
-    - { path: '/usr/local/bin/sops', state: "file" }
-    - { path: '/usr/local/sbin', state: "directory" }
+    - { path: '/usr/local/bin/sops', state: "file", mode: '0755' }
+    - { path: '/usr/local/sbin', state: "directory", mode: '0755' }
+    - { path: '/var/log/wtmp', state: "file", mode: '0640' }
+    - { path: '/var/log/alternatives.log', state: "file", mode: '0640' }
+    - { path: '/var/log/apt/eipp.log.xz', state: "file", mode: '0640' }
+    - { path: '/var/log/apt/history.log', state: "file", mode: '0640' }
+    - { path: '/var/log/landscape/sysinfo.log', state: "file", mode: '0640' }
+    - { path: '/var/log/dpkg.log', state: "file", mode: '0640' }
+    - { path: '/var/log/btmp', state: "file", mode: '0640' }
+    - { path: '/var/log/lastlog', state: "file", mode: '0640' }
+    - { path: '/var/log/unattended-upgrades/unattended-upgrades-shutdown.log', state: "file", mode: '0640' }
   when:
     - ansible_os_family == 'Debian'
 
@@ -231,5 +240,35 @@
     - { path: '/usr/lib/vlock/modules/nosysrq.so', state: "file" }
     - { path: '/usr/lib/x86_64-linux-gnu/utempter/utempter', state: "file" }
     - { path: '/usr/bin/dotlockfile', state: "file" }
+  when:
+    - ansible_os_family == 'Debian'
+
+- name: Set audit log directories to 0750
+  lineinfile:
+    path: '/usr/lib/tmpfiles.d/00rsyslog.conf'
+    regexp: '(^z \/var\/log)\s+(\d+)\s+(.*$)'
+    line: '\1 0750 \3'
+    backrefs: yes
+  when:
+    - ansible_os_family == 'Debian'
+
+- name: Set /var/log/ systemd file premission to 0640
+  lineinfile:
+    path: '/usr/lib/tmpfiles.d/var.conf'
+    regexp: '(^f {{ item }})\s+(\d+)\s+(.*$)'
+    line: '\1 0640 \3'
+    backrefs: yes
+  with_items:
+    - /var/log/wtmp
+    - /var/log/btmp
+    - /var/log/lastlog
+  when:
+    - ansible_os_family == 'Debian'
+
+- name: Set cloud-init log permissions
+  lineinfile:
+    line: "   mode=0640" 
+    dest: /etc/cloud/cloud.cfg.d/05_logging.cfg
+    insertafter: '\[logger_cloudinit\]'
   when:
     - ansible_os_family == 'Debian'

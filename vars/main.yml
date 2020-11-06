@@ -45,6 +45,9 @@ auditd_config:
   - parameter: log_group
     value: "{{ security_rhel7_auditd_log_group }}"
     config: /etc/audit/auditd.conf
+  - parameter: disk_full_action
+    value: "{{ security_rhel7_auditd_disk_full_action }}"
+    config: /etc/audit/auditd.conf
 ## auditd rules
 # This variable is used in tasks/rhel7stig/auditd.yml to deploy auditd rules
 # for various commands and syscalls.

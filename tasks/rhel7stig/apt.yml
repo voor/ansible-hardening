@@ -137,3 +137,18 @@
     - medium
     - packages
     - V-75529
+
+- name: V-75529 - Clean kernel requirements/dependencies when removing packages (dpkg)
+  lineinfile:
+    dest: /etc/apt/apt.conf.d/50unattended-upgrades
+    regexp: "^(#)?Unattended-Upgrade::Remove-Unused-Kernel-Packages"
+    line: "Unattended-Upgrade{{ '::' }}Remove-Unused-Kernel-Packages \"true\";"
+    state: present
+    create: yes
+  when:
+    - security_package_clean_on_remove | bool
+    - ansible_os_family | lower == 'debian'
+  tags:
+    - medium
+    - packages
+    - V-75529

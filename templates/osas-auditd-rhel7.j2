@@ -151,3 +151,10 @@
 # V-75773 - Successful/unsuccessful modifications to the faillog file must generate an audit record.
 -w /var/log/faillog -p wa -k logins
 {% endif %}
+
+
+-w /var/log/wtmp -p wa -k logins
+-w /var/run/wtmp -p wa -k logins
+-w /var/log/btmp -p wa -k logins
+-w /sbin/fdisk -p x -k fdisk
+-w /var/log/sudo.log -p wa -k priv_actions
