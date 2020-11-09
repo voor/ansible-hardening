@@ -265,10 +265,15 @@
   when:
     - ansible_os_family == 'Debian'
 
-- name: Set cloud-init log permissions
-  lineinfile:
-    line: "   mode=0640" 
-    dest: /etc/cloud/cloud.cfg.d/05_logging.cfg
-    insertafter: '\[logger_cloudinit\]'
+- name: Copy cloud-init-log-permissions
+  template:
+    src: cloud-init-log-permissions.service
+    dest: /etc/systemd/system/cloud-init-log-permissions.service
   when:
     - ansible_os_family == 'Debian'
+
+- name: Enable cloud-init-log-permissions
+  service:
+    name: "cloud-init-log-permissions"
+    enabled: yes
+    
