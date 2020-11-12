@@ -219,6 +219,8 @@
     - { path: '/var/log/btmp', state: "file", mode: '0640' }
     - { path: '/var/log/lastlog', state: "file", mode: '0640' }
     - { path: '/var/log/unattended-upgrades/unattended-upgrades-shutdown.log', state: "file", mode: '0640' }
+    - { path: '/usr/bin/crictl', state: "file", mode: '0755' }
+
   when:
     - ansible_os_family == 'Debian'
 
@@ -276,4 +278,5 @@
   service:
     name: "cloud-init-log-permissions"
     enabled: yes
-    
+  when:
+    - ansible_os_family == 'Debian'
