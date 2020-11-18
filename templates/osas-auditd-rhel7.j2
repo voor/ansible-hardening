@@ -62,7 +62,7 @@
 {# specific requirements are met.                                            #}
 {#                                                                           #}
 {% if vars['security_rhel7_audit_' + command_sanitized ] | bool and (audited_command['distro'] | default(ansible_os_family | lower) == ansible_os_family | lower) %}
-# {{ audited_command['stig_id'] }} - All uses of the {{ audited_command['command'] }} command must be audited.
+# {{ audited_command['audit_key'] if 'audit_key' in  audited_command else audited_command['stig_id'] }} - All uses of the {{ audited_command['command'] }} command must be audited.
 {% 	for perm in perms %}
 {% 		for auid in auids %}
 {#                                                                           #}
@@ -73,14 +73,14 @@
 {% 				for arch in auditd_architectures %}
 {% 					if audited_command['arch_specific'] == arch or audited_command['arch_specific'] | default(false) | bool %}
 {% 						if audited_command['path'] | default(false) %}
--a always,exit -F arch={{ arch }} -F path={{ audited_command['path'] }}/{{ audited_command['command'] }} {{ perm }} {{ x_flag }} {{ auid }} -k {{ audited_command['stig_id'] }}
+-a always,exit -F arch={{ arch }} -F path={{ audited_command['path'] }}/{{ audited_command['command'] }} {{ perm }} {{ x_flag }} {{ auid }} -k {{ audited_command['audit_key'] if 'audit_key' in  audited_command else audited_command['stig_id'] }}
 {% 						else %}
--a always,exit -F arch={{ arch }} -S {{ audited_command['command'] }}  {{ perm }} {{ x_flag }} {{ auid }} -k {{ audited_command['stig_id'] }}
+-a always,exit -F arch={{ arch }} -S {{ audited_command['command'] }}  {{ perm }} {{ x_flag }} {{ auid }} -k {{ audited_command['audit_key'] if 'audit_key' in  audited_command else audited_command['stig_id'] }}
 {% 						endif %}
 {% 					endif%}
 {% 				endfor %}
 {% 			else %}
--a always,exit -F path={{ audited_command['path'] | default('/usr/bin') }}/{{ audited_command['command'] }} {{ perm }} {{ x_flag }} {{ auid }} -k {{ audited_command['stig_id'] }}
+-a always,exit -F path={{ audited_command['path'] | default('/usr/bin') }}/{{ audited_command['command'] }} {{ perm }} {{ x_flag }} {{ auid }} -k {{ audited_command['audit_key'] if 'audit_key' in  audited_command else audited_command['stig_id'] }}
 {% 			endif %}
 {% 		endfor %}
 {% 	endfor %}

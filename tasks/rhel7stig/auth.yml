@@ -203,18 +203,18 @@
 
 - name: V-72217 - The operating system must limit the number of concurrent sessions to 10 for all accounts and/or account types.
   blockinfile:
-    dest: /etc/security/limits.d/ansible-hardening-maxlogins.conf
-    create: yes
+    dest: /etc/security/limits.conf
+    insertbefore: EOF
     block: |
       # Deployed by the ansible-hardening role
-      # V-72217 - Limit concurrent sessions for all accounts/types
+      # V-219301 - Limit concurrent sessions for all accounts/types
       * hard maxlogins {{ security_rhel7_concurrent_session_limit }}
   when:
     - security_rhel7_concurrent_session_limit is defined
   tags:
     - auth
     - low
-    - V-72217
+    - V-219301
 
 - name: Check for pam_lastlog in PAM configuration
   command: "grep pam_lastlog {{ pam_postlogin_file }}"

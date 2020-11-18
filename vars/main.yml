@@ -179,6 +179,7 @@ audited_commands:
     arch_specific: no
   - command: removexattr
     stig_id: V-72117
+    audit_key: perm_mod
     arch_specific: yes
     add_root: yes
   - command: rename
