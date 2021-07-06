@@ -208,7 +208,6 @@
     group: root
     mode: "{{ item.mode }}"
   with_items:
-    - { path: '/usr/local/bin/sops', state: "file", mode: '0755' }
     - { path: '/usr/local/sbin', state: "directory", mode: '0755' }
     - { path: '/var/log/wtmp', state: "file", mode: '0640' }
     - { path: '/var/log/alternatives.log', state: "file", mode: '0640' }
